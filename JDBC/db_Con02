@@ -1,0 +1,53 @@
+package db_con02;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Product 
+{
+
+	public static void main(String[] args)
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		try(sc;) 
+		{
+			// step-1 : Loading Driver;
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			
+			// step-2 : creating Connection;
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@Localhost:1521:Xe","system","tiger");
+			
+			// step-3 : creating JDBC-Statement;
+			Statement stm = con.createStatement();
+			
+			// step-4 : executing query;
+			ResultSet rs = stm.executeQuery("select * from productdetails");
+			System.out.println("-----------------------view details---------------------");
+			System.out.println("code\t"+"name\t"+"price\t"+"qty\t");
+			System.out.println("----------------------------");
+			while(rs.next())
+			{
+				System.out.println(rs.getInt(1)+"\t"+rs.getString(2)+"\t"+rs.getFloat(3)+"\t"+rs.getInt(4));
+			}
+			
+			// step-5 : connection close; 
+			con.close();
+		} 
+		catch (ClassNotFoundException e)
+		{
+			
+			e.printStackTrace();
+		}
+		catch (SQLException e)
+		{
+		   e.printStackTrace();
+		}
+
+	}
+
+}
