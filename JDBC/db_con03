@@ -1,0 +1,118 @@
+package db_con03;
+// student Details.
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class StudentDetails 
+  {
+
+	public static void main(String[] args)
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		try(sc;) 
+		{
+			// step-1 : Loading Driver;
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			
+			// step-2 : Creating Connection;
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@Localhost:1521:Xe","system","tiger");
+			
+			// step-3 : Creating JDBC_Statement;
+			Statement stm = con.createStatement();
+			
+			while(true)
+			{
+				System.out.println("--------------------Opreation Choice--------------------------");
+				System.out.println("1.Add Student Details.\n2.View Student Details.\n3.View Student Details By Rollno.");
+				System.out.print("Enter your Choice :");
+				int choice = Integer.parseInt(sc.nextLine());
+				switch(choice)
+				{
+				case 1:
+					System.out.println("------------------Add Student Details----------------------");
+					
+					System.out.println("Enter Student Rollno : ");
+					int rollno = Integer.parseInt(sc.nextLine());
+					
+					System.out.println("Enter Student name : ");
+					String name = sc.nextLine();
+					
+					System.out.println("Enter Student Batchno : ");
+					int batchno = Integer.parseInt(sc.nextLine());
+					
+					System.out.println("Enter Student City : ");
+					String city = sc.nextLine();
+					
+					System.out.println("Enter Student Phono : ");
+					long phono = Long.parseLong(sc.nextLine());
+					
+					int k = stm.executeUpdate("insert into studentdetails values("+rollno+" ,'"+name+"' ,"+batchno+" ,'"+city+"', "+phono+")" );
+					if(k>0)
+					{
+						System.out.println("Student Details Added SuccessFully...");
+					}
+					
+					break;
+					
+				case 2:
+					System.out.println("---------------View Student Details-------------------------");
+					
+					// step-4 : Executing query;
+					System.out.println("RollNo\tName\tBatch\tcity\tphono");
+					System.out.println("---------------------------------------------------------------");
+					ResultSet rs = stm.executeQuery("select * from studentdetails");
+					while(rs.next())
+					{
+						System.out.println(rs.getInt(1)+"\t"+rs.getString(2)+"\t"+rs.getInt(3)+"\t"+rs.getString(4)+"\t"+rs.getLong(5));
+					}
+					break;
+					
+				case 3:
+					System.out.println("--------------View Student Details By Rollno.------------------------");
+					
+					System.out.println("Enter Student Rollno : ");
+					int rollId = Integer.parseInt(sc.nextLine());
+					
+					// step-4_repeat_again : Executing query;
+					System.out.println("RollNo\tName\tBatch\tcity\tphono");
+					System.out.println("----------------------------------------------------------");
+					ResultSet rs2 = stm.executeQuery("select * from studentdetails where rollno="+rollId+"");
+					if(rs2.next())
+					{
+						System.out.println(rs2.getInt(1)+"\t"+rs2.getString(2)+"\t"+rs2.getInt(3)+"\t"+rs2.getString(4)+"\t"+rs2.getLong(5));
+					}
+				else {
+					System.out.println("Invalid Student Id....");
+					}
+					break;
+					
+				case 4:
+					System.out.println("---------------------------------Opreation Stopped-----------------------");
+				    System.exit(0);
+				    break;
+				    
+				    default:
+				    	System.out.println("Invalid Choice...");
+				}
+			}
+		}
+		catch (ClassNotFoundException e)
+		{
+			
+			e.printStackTrace();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		
+
+	}
+
+ }
