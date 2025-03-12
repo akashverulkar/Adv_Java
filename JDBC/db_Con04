@@ -1,0 +1,101 @@
+package db_con04;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Product 
+{
+
+	public static void main(String[] args) 
+	{
+		Scanner sc = new Scanner(System.in); 
+		
+		try (sc;)
+		{
+			// step_1 : Loading Driver;
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			
+			// step-2 : creating connection;
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@Localhost:1521:Xe","system","tiger");
+			
+			// step-3 : creating JDBC-Statement;
+			Statement stm = con.createStatement();
+			
+			while(true)
+			{
+			System.out.println("----------------------------------Opreation choice--------------------------------------");
+			System.out.println("1.Add Product Details.\n2.View Product Detatils.\n3.View Product Details By Code.");
+			System.out.println("Enter your choice : ");
+			int choice = Integer.parseInt(sc.nextLine());
+			
+			switch(choice)
+			{
+			case 1:
+				System.out.println("Enter Product code : ");
+				int code = Integer.parseInt(sc.nextLine());
+				
+				System.out.println("Enter Product Name : ");
+				String name = sc.nextLine();
+				
+				System.out.println("Enter Product Price : ");
+				float price = Float.parseFloat(sc.nextLine());
+				
+				System.out.println("Enter Product Quantity : ");
+				int qty = Integer.parseInt(sc.nextLine());
+				
+				int k = stm.executeUpdate("insert into productdeatils values("+code+",'"+name+"',"+price+","+qty+")");
+				if(k>0)
+				{
+					System.out.println("Product Details Added Succussfully...");
+				}
+				break;
+				
+			case 2:
+				System.out.println("--------------------------View Product Details-----------------------------------------");
+				
+				// step-4 : Executing quary;
+				ResultSet rs1 = stm.executeQuery("select * from productdetails");
+				while(rs1.next())
+				{
+				System.out.println(rs1.getInt(1)+"\t"+rs1.getString(2)+"\t"+rs1.getFloat(3)+"\t"+rs1.getString(4));
+				}
+				break;
+				
+			case 3:
+				System.out.println("----------------------------------View ProductId Details By Id-----------------------------");
+				System.out.println("Enter the product ID : ");
+				int id = Integer.parseInt(sc.nextLine());
+				ResultSet rs2 = stm.executeQuery("select * from productdetails where code = "+id+"");
+				if(rs2.next())
+				{
+				System.out.println(rs2.getInt(1)+"\t"+rs2.getString(2)+"\t"+rs2.getFloat(3)+"\t"+rs2.getString(4));
+				}
+				else
+				{
+					System.out.println("Invalid product Id...");
+				}
+				break;
+			case 4:
+				System.out.println("opreation is stopped.....");
+				System.exit(0);
+				break;
+				
+				default:
+					System.out.println("Invalid choice....");
+					break;
+				
+			}// end switch;
+			}// end loop;
+		} 
+		catch (ClassNotFoundException | SQLException e) 
+		{
+			
+			e.printStackTrace();
+		}
+	}
+
+}
